@@ -186,7 +186,7 @@ look3(Text *t, uint q0, uint q1, int external)
 		bufread(&t->file->b, q0, r, q1-q0);
 		m->data = runetobyte(r, q1-q0);
 		m->ndata = strlen(m->data);
-		if (t->w->backwards) {
+		if (t->w != nil && t->w->backwards) {
 			pat = runemalloc(q1-q0+1);
 			for (eval = 0; eval < q1-q0; eval++)
 				pat[eval] = r[eval];
@@ -203,7 +203,7 @@ look3(Text *t, uint q0, uint q1, int external)
 
 	/* interpret alphanumeric string ourselves */
 	if(expanded == FALSE) {
-		if (t->w->backwards) {
+		if (t->w != nil && t->w->backwards) {
 			free(pat);
 		}
 		return;
@@ -211,7 +211,7 @@ look3(Text *t, uint q0, uint q1, int external)
 	if(e.name || e.u.at)
 		openfile(t, &e);
 	else{
-		if (t->w->backwards) {
+		if (t->w != nil && t->w->backwards) {
 			ra = range(e.q0, e.q1);
 			ra = regexp(TRUE, t, range(-1,-1), ra, pat, '-', &eval);
 			if (ra.q0 < 0 || ra.q1 < 0) {
@@ -241,7 +241,7 @@ look3(Text *t, uint q0, uint q1, int external)
 	}
 
    Return:
-	if (t->w->backwards) {
+	if (t->w != nil && t->w->backwards) {
 		free(pat);
 	}
 	free(e.name);
@@ -669,7 +669,7 @@ expand(Text *t, uint q0, uint q1, Expand *e)
 			e->jump = FALSE;
 	}
 
-	if(expandfile(t, q0, q1, e))
+	if(expandfile(t, q0, q1, e)) 
 		return TRUE;
 
 	if(q0 == q1){
